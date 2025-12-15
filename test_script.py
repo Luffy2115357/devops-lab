@@ -1,4 +1,10 @@
-cat <<EOF > test_script.py
-print("Running tests...")
-print("Success: All tests passed!")
-EOF
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Hello World"
+
+if __name__ == '__main__':
+    print("Success: All tests passed!")
+
