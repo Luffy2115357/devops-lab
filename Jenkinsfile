@@ -2,7 +2,7 @@ pipeline {
     agent any 
     environment {
         // REPLACE THIS WITH YOUR DOCKER HUB USERNAME
-        DOCKERHUB_USERNAME = madhudevops2026
+        DOCKERHUB_USERNAME = 'madhudevops2026'
         IMAGE_NAME = 'my-python-app'
     }
     stages {
