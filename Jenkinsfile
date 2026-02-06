@@ -1,37 +1,24 @@
 pipeline {
-    agent any 
-    environment {
-        // REPLACE THIS WITH YOUR DOCKER HUB USERNAME
-        DOCKERHUB_USERNAME = 'madhudevops2026'
-        IMAGE_NAME = 'my-python-app'
-    }
+    agent any
+
     stages {
-        stage('Checkout') {
+        stage('Build Image') {
             steps {
-                checkout scm
+                echo 'Building the Docker Image...'
+                // This builds the container and names it "my-portfolio"
+                sh 'docker build -t my-portfolio .'
             }
         }
-        stage('Build Docker Image') {
+
+        stage('Deploy') {
             steps {
-                script {
-                    sh "docker build -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest ."
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                 sh "docker run $DOCKERHUB_USERNAME/$IMAGE_NAME:latest"
-            }
-        }
-        stage('Deploy to Docker Hub') {
-            steps {
-                script {
-                    echo 'Pushing image to Docker Hub...'
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                        sh "docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:latest"
-                    }
-                }
+                echo 'Deploying to Port 5005...'
+                // 1. Stop the old container (if it's running) so we don't get an error
+                sh 'docker stop portfolio-container || true'
+                // 2. Remove the old container to make room for the new one
+                sh 'docker rm portfolio-container || true'
+                // 3. Run the new container! Mapping host port 5005 to container port 5000
+                sh 'docker run -d -p 5005:5000 --name portfolio-container my-portfolio'
             }
         }
     }
